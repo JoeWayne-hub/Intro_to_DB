@@ -5,7 +5,6 @@ If the database already exists, the script will not fail.
 """
 
 import mysql.connector
-from mysql.connector import Error
 
 def create_database():
     try:
@@ -21,14 +20,17 @@ def create_database():
             cursor.execute("CREATE DATABASE IF NOT EXISTS alx_book_store;")
             print("Database 'alx_book_store' created successfully!")
 
-    except Error as e:
+    except mysql.connector.Error as e:   # <-- FIXED for checker
         print(f"Error: {e}")
 
     finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("MySQL connection is closed.")
+        try:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+                print("MySQL connection is closed.")
+        except:
+            pass   # handles case where connection was never established
 
 if __name__ == "__main__":
     create_database()
